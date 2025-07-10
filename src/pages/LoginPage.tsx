@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Sparkles, ArrowLeft } from "lucide-react";
+import { Sparkles, ArrowLeft, Zap } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -42,6 +42,27 @@ const LoginPage = () => {
           toast.error("Invalid role selected");
       }
     }, 1000);
+  };
+
+  const fillDemoCredentials = (demoRole: string) => {
+    switch (demoRole) {
+      case "super-admin":
+        setEmail("admin@demo.com");
+        setPassword("password");
+        setRole("super-admin");
+        break;
+      case "admin":
+        setEmail("manager@techcorp.com");
+        setPassword("password");
+        setRole("admin");
+        break;
+      case "employee":
+        setEmail("john@techcorp.com");
+        setPassword("password");
+        setRole("employee");
+        break;
+    }
+    toast.success(`Demo credentials filled for ${demoRole}`);
   };
 
   return (
@@ -124,6 +145,42 @@ const LoginPage = () => {
                 Sign In
               </Button>
             </form>
+
+            {/* Demo Buttons */}
+            <div className="mt-6 space-y-3">
+              <div className="text-center">
+                <p className="text-sm text-gray-600 mb-3">Quick Demo Access:</p>
+              </div>
+              <div className="grid grid-cols-1 gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fillDemoCredentials("super-admin")}
+                  className="w-full bg-white/50 hover:bg-white/70 border-purple-200"
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  Demo Super Admin
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fillDemoCredentials("admin")}
+                  className="w-full bg-white/50 hover:bg-white/70 border-blue-200"
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  Demo Org Admin
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fillDemoCredentials("employee")}
+                  className="w-full bg-white/50 hover:bg-white/70 border-green-200"
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  Demo Employee
+                </Button>
+              </div>
+            </div>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
