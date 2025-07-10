@@ -1,8 +1,8 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Users, FileText, TrendingUp, Award, Plus, Eye, Send, Bot } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -62,7 +62,7 @@ const AdminDashboard = () => {
     }
   });
 
-  const [showAIAssistant, setShowAIAssistant] = useState(false);
+  const [showAIModal, setShowAIModal] = useState(false);
 
   const engagementData = [
     { week: "Week 1", engagement: 78, responses: 145 },
@@ -112,9 +112,9 @@ const AdminDashboard = () => {
           </div>
           <div className="flex space-x-2">
             <Button 
-              onClick={() => setShowAIAssistant(!showAIAssistant)} 
+              onClick={() => setShowAIModal(true)} 
               variant="outline"
-              className={showAIAssistant ? "bg-purple-50 border-purple-200" : ""}
+              className="bg-white/50 hover:bg-white/70 border-purple-200"
             >
               <Bot className="w-4 h-4 mr-2" />
               AI Assistant
@@ -132,199 +132,205 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-          {/* Main Content */}
-          <div className={`space-y-6 ${showAIAssistant ? "xl:col-span-3" : "xl:col-span-4"}`}>
-            {/* Key Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <Card className="hover:shadow-lg transition-all duration-300">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Employees</CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">1,250</div>
-                  <p className="text-xs text-muted-foreground">+12 new this month</p>
-                </CardContent>
-              </Card>
+        {/* Main Content */}
+        <div className="space-y-6">
+          {/* Key Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <Card className="hover:shadow-lg transition-all duration-300">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Employees</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">1,250</div>
+                <p className="text-xs text-muted-foreground">+12 new this month</p>
+              </CardContent>
+            </Card>
 
-              <Card className="hover:shadow-lg transition-all duration-300">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Active Surveys</CardTitle>
-                  <FileText className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">3</div>
-                  <p className="text-xs text-muted-foreground">1 pending distribution</p>
-                </CardContent>
-              </Card>
+            <Card className="hover:shadow-lg transition-all duration-300">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Active Surveys</CardTitle>
+                <FileText className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">3</div>
+                <p className="text-xs text-muted-foreground">1 pending distribution</p>
+              </CardContent>
+            </Card>
 
-              <Card className="hover:shadow-lg transition-all duration-300">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Avg Engagement</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">85%</div>
-                  <p className="text-xs text-muted-foreground">+3% from last month</p>
-                </CardContent>
-              </Card>
+            <Card className="hover:shadow-lg transition-all duration-300">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Avg Engagement</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">85%</div>
+                <p className="text-xs text-muted-foreground">+3% from last month</p>
+              </CardContent>
+            </Card>
 
-              <Card className="hover:shadow-lg transition-all duration-300">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Raffle Entries</CardTitle>
-                  <Award className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">892</div>
-                  <p className="text-xs text-muted-foreground">This month's total</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Engagement Trends</CardTitle>
-                  <CardDescription>Weekly engagement scores and response rates</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={engagementData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="week" />
-                      <YAxis />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="engagement" stroke="#8B5CF6" strokeWidth={2} />
-                      <Line type="monotone" dataKey="responses" stroke="#06B6D4" strokeWidth={2} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Department Engagement</CardTitle>
-                  <CardDescription>Engagement scores by department</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={departmentData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="engagement" fill="#8B5CF6" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Surveys and Raffle */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Current Surveys */}
-              <Card className="lg:col-span-2">
-                <CardHeader>
-                  <CardTitle>Current Surveys</CardTitle>
-                  <CardDescription>AI-generated surveys and their status</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {surveys.map((survey) => (
-                      <div key={survey.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <h4 className="font-medium">{survey.title}</h4>
-                            {getStatusBadge(survey.status)}
-                            <Badge variant="outline" className="text-xs">
-                              {survey.type}
-                            </Badge>
-                          </div>
-                          <div className="flex items-center space-x-4 text-sm text-gray-600">
-                            <span>Responses: {survey.responses}/{survey.target}</span>
-                            <span>Deadline: {survey.deadline}</span>
-                          </div>
-                          <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
-                            <div 
-                              className="bg-gradient-to-r from-purple-600 to-blue-600 h-2 rounded-full" 
-                              style={{ width: `${(survey.responses / survey.target) * 100}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                        <div className="flex space-x-2 ml-4">
-                          <Button variant="ghost" size="sm">
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                          {survey.status === "draft" && (
-                            <Button variant="ghost" size="sm">
-                              <Send className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <Link to="/analytics" className="block mt-4">
-                    <Button variant="outline" className="w-full">
-                      View Detailed Analytics
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-
-              {/* Monthly Raffle */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Monthly Raffle</CardTitle>
-                  <CardDescription>{raffleData.currentMonth}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-purple-600">{raffleData.totalEntries}</div>
-                      <p className="text-sm text-gray-600">Total Entries</p>
-                    </div>
-
-                    <div>
-                      <h4 className="font-medium mb-2">Top Participants</h4>
-                      <div className="space-y-2">
-                        {raffleData.topParticipants.slice(0, 3).map((participant, index) => (
-                          <div key={index} className="flex justify-between items-center text-sm">
-                            <span>{participant.name}</span>
-                            <Badge variant="outline">{participant.entries} entries</Badge>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="pt-4 border-t">
-                      <h4 className="font-medium mb-2">Last Winner</h4>
-                      <div className="text-sm text-gray-600">
-                        <p className="font-medium">{raffleData.previousWinner.name}</p>
-                        <p>{raffleData.previousWinner.department} • {raffleData.previousWinner.month}</p>
-                        <p>{raffleData.previousWinner.entries} entries</p>
-                      </div>
-                    </div>
-
-                    <Button onClick={handleDrawRaffle} className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600">
-                      <Award className="w-4 h-4 mr-2" />
-                      Draw This Month
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            <Card className="hover:shadow-lg transition-all duration-300">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Raffle Entries</CardTitle>
+                <Award className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">892</div>
+                <p className="text-xs text-muted-foreground">This month's total</p>
+              </CardContent>
+            </Card>
           </div>
 
-          {/* AI Assistant Sidebar */}
-          {showAIAssistant && (
-            <div className="xl:col-span-1">
+          {/* Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Engagement Trends</CardTitle>
+                <CardDescription>Weekly engagement scores and response rates</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={engagementData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="week" />
+                    <YAxis />
+                    <Tooltip />
+                    <Line type="monotone" dataKey="engagement" stroke="#8B5CF6" strokeWidth={2} />
+                    <Line type="monotone" dataKey="responses" stroke="#06B6D4" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Department Engagement</CardTitle>
+                <CardDescription>Engagement scores by department</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={departmentData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="engagement" fill="#8B5CF6" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Surveys and Raffle */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Current Surveys */}
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle>Current Surveys</CardTitle>
+                <CardDescription>AI-generated surveys and their status</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {surveys.map((survey) => (
+                    <div key={survey.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <h4 className="font-medium">{survey.title}</h4>
+                          {getStatusBadge(survey.status)}
+                          <Badge variant="outline" className="text-xs">
+                            {survey.type}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center space-x-4 text-sm text-gray-600">
+                          <span>Responses: {survey.responses}/{survey.target}</span>
+                          <span>Deadline: {survey.deadline}</span>
+                        </div>
+                        <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="bg-gradient-to-r from-purple-600 to-blue-600 h-2 rounded-full" 
+                            style={{ width: `${(survey.responses / survey.target) * 100}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                      <div className="flex space-x-2 ml-4">
+                        <Button variant="ghost" size="sm">
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        {survey.status === "draft" && (
+                          <Button variant="ghost" size="sm">
+                            <Send className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <Link to="/analytics" className="block mt-4">
+                  <Button variant="outline" className="w-full">
+                    View Detailed Analytics
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Monthly Raffle */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Monthly Raffle</CardTitle>
+                <CardDescription>{raffleData.currentMonth}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-purple-600">{raffleData.totalEntries}</div>
+                    <p className="text-sm text-gray-600">Total Entries</p>
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium mb-2">Top Participants</h4>
+                    <div className="space-y-2">
+                      {raffleData.topParticipants.slice(0, 3).map((participant, index) => (
+                        <div key={index} className="flex justify-between items-center text-sm">
+                          <span>{participant.name}</span>
+                          <Badge variant="outline">{participant.entries} entries</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t">
+                    <h4 className="font-medium mb-2">Last Winner</h4>
+                    <div className="text-sm text-gray-600">
+                      <p className="font-medium">{raffleData.previousWinner.name}</p>
+                      <p>{raffleData.previousWinner.department} • {raffleData.previousWinner.month}</p>
+                      <p>{raffleData.previousWinner.entries} entries</p>
+                    </div>
+                  </div>
+
+                  <Button onClick={handleDrawRaffle} className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600">
+                    <Award className="w-4 h-4 mr-2" />
+                    Draw This Month
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* AI Assistant Modal */}
+        <Dialog open={showAIModal} onOpenChange={setShowAIModal}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <Bot className="w-5 h-5 text-purple-600" />
+                <span>AI Survey Assistant</span>
+              </DialogTitle>
+            </DialogHeader>
+            <div className="h-[600px] overflow-hidden">
               <AIAssistant />
             </div>
-          )}
-        </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );
