@@ -3,13 +3,17 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Building2, Users, TrendingUp, Plus, Settings, Shield } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import DashboardLayout from "@/components/DashboardLayout";
 import { toast } from "sonner";
 
 const SuperAdminDashboard = () => {
-  const [organizations] = useState([
+  const [organizations, setOrganizations] = useState([
     {
       id: 1,
       name: "TechCorp Industries",
@@ -48,6 +52,15 @@ const SuperAdminDashboard = () => {
     }
   ]);
 
+  const [isAddOrgDialogOpen, setIsAddOrgDialogOpen] = useState(false);
+  const [newOrganization, setNewOrganization] = useState({
+    name: "",
+    adminName: "",
+    adminEmail: "",
+    plan: "",
+    employees: ""
+  });
+
   const platformStats = [
     { name: "Jan", organizations: 12, users: 2340 },
     { name: "Feb", organizations: 15, users: 2890 },
@@ -64,8 +77,28 @@ const SuperAdminDashboard = () => {
     { name: "Trial", value: 5, color: "#F59E0B" }
   ];
 
+  const plans = ["Trial", "Standard", "Professional", "Enterprise"];
+
   const handleAddOrganization = () => {
-    toast.success("Organization creation flow initiated");
+    if (!newOrganization.name || !newOrganization.adminName || !newOrganization.adminEmail || !newOrganization.plan) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    const organization = {
+      id: organizations.length + 1,
+      name: newOrganization.name,
+      employees: parseInt(newOrganization.employees) || 0,
+      status: "active",
+      plan: newOrganization.plan,
+      engagement: 75,
+      surveys: 0
+    };
+
+    setOrganizations(prev => [...prev, organization]);
+    setNewOrganization({ name: "", adminName: "", adminEmail: "", plan: "", employees: "" });
+    setIsAddOrgDialogOpen(false);
+    toast.success(`Organization "${organization.name}" created successfully!`);
   };
 
   const getStatusBadge = (status: string) => {
@@ -91,10 +124,78 @@ const SuperAdminDashboard = () => {
             <h1 className="text-3xl font-bold text-gray-900">Super Admin Dashboard</h1>
             <p className="text-gray-600 mt-1">Platform-wide overview and management</p>
           </div>
-          <Button onClick={handleAddOrganization} className="bg-gradient-to-r from-purple-600 to-blue-600">
-            <Plus className="w-4 h-4 mr-2" />
-            Add Organization
-          </Button>
+          <Dialog open={isAddOrgDialogOpen} onOpenChange={setIsAddOrgDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-to-r from-purple-600 to-blue-600">
+                <Plus className="w-4 h-4 mr-2" />
+                Add Organization
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Add New Organization</DialogTitle>
+                <DialogDescription>
+                  Create a new organization and set up their admin account
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="orgName">Organization Name *</Label>
+                  <Input
+                    id="orgName"
+                    value={newOrganization.name}
+                    onChange={(e) => setNewOrganization(prev => ({ ...prev, name: e.target.value }))}
+                    placeholder="Acme Corporation"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="adminName">Admin Full Name *</Label>
+                  <Input
+                    id="adminName"
+                    value={newOrganization.adminName}
+                    onChange={(e) => setNewOrganization(prev => ({ ...prev, adminName: e.target.value }))}
+                    placeholder="John Smith"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="adminEmail">Admin Email *</Label>
+                  <Input
+                    id="adminEmail"
+                    type="email"
+                    value={newOrganization.adminEmail}
+                    onChange={(e) => setNewOrganization(prev => ({ ...prev, adminEmail: e.target.value }))}
+                    placeholder="admin@acme.com"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="plan">Subscription Plan *</Label>
+                  <Select value={newOrganization.plan} onValueChange={(value) => setNewOrganization(prev => ({ ...prev, plan: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a plan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {plans.map(plan => (
+                        <SelectItem key={plan} value={plan}>{plan}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="employees">Expected Employee Count</Label>
+                  <Input
+                    id="employees"
+                    type="number"
+                    value={newOrganization.employees}
+                    onChange={(e) => setNewOrganization(prev => ({ ...prev, employees: e.target.value }))}
+                    placeholder="100"
+                  />
+                </div>
+                <Button onClick={handleAddOrganization} className="w-full">
+                  Create Organization
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* Platform Stats */}
@@ -105,7 +206,7 @@ const SuperAdminDashboard = () => {
               <Building2 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">32</div>
+              <div className="text-2xl font-bold">{organizations.length}</div>
               <p className="text-xs text-muted-foreground">+4 from last month</p>
             </CardContent>
           </Card>
@@ -116,7 +217,9 @@ const SuperAdminDashboard = () => {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">5,234</div>
+              <div className="text-2xl font-bold">
+                {organizations.reduce((acc, org) => acc + org.employees, 0).toLocaleString()}
+              </div>
               <p className="text-xs text-muted-foreground">+15% from last month</p>
             </CardContent>
           </Card>
@@ -127,7 +230,9 @@ const SuperAdminDashboard = () => {
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">84%</div>
+              <div className="text-2xl font-bold">
+                {Math.round(organizations.reduce((acc, org) => acc + org.engagement, 0) / organizations.length)}%
+              </div>
               <p className="text-xs text-muted-foreground">+2% from last month</p>
             </CardContent>
           </Card>
@@ -138,7 +243,9 @@ const SuperAdminDashboard = () => {
               <Shield className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">8</div>
+              <div className="text-2xl font-bold">
+                {organizations.filter(org => org.status === "trial").length}
+              </div>
               <p className="text-xs text-muted-foreground">2 converting this week</p>
             </CardContent>
           </Card>
@@ -196,7 +303,7 @@ const SuperAdminDashboard = () => {
         {/* Organizations Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Organizations</CardTitle>
+            <CardTitle>Organizations ({organizations.length})</CardTitle>
             <CardDescription>Manage all organizations on the platform</CardDescription>
           </CardHeader>
           <CardContent>
@@ -219,7 +326,9 @@ const SuperAdminDashboard = () => {
                       <td className="p-2 font-medium">{org.name}</td>
                       <td className="p-2">{org.employees.toLocaleString()}</td>
                       <td className="p-2">{getStatusBadge(org.status)}</td>
-                      <td className="p-2">{org.plan}</td>
+                      <td className="p-2">
+                        <Badge variant="outline">{org.plan}</Badge>
+                      </td>
                       <td className="p-2">
                         <div className="flex items-center space-x-2">
                           <div className="w-16 bg-gray-200 rounded-full h-2">

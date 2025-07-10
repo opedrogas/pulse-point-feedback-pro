@@ -76,7 +76,7 @@ const EmployeeManagement = () => {
   ]);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedDepartment, setSelectedDepartment] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newEmployee, setNewEmployee] = useState({
     name: "",
@@ -91,7 +91,7 @@ const EmployeeManagement = () => {
     const matchesSearch = employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          employee.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          employee.department.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDepartment = !selectedDepartment || employee.department === selectedDepartment;
+    const matchesDepartment = selectedDepartment === "all" || employee.department === selectedDepartment;
     return matchesSearch && matchesDepartment;
   });
 
@@ -293,7 +293,7 @@ const EmployeeManagement = () => {
                   <SelectValue placeholder="All departments" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All departments</SelectItem>
+                  <SelectItem value="all">All departments</SelectItem>
                   {departments.map(dept => (
                     <SelectItem key={dept} value={dept}>{dept}</SelectItem>
                   ))}
@@ -382,7 +382,7 @@ const EmployeeManagement = () => {
                 <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No employees found</h3>
                 <p className="text-gray-600">
-                  {searchTerm || selectedDepartment 
+                  {searchTerm || selectedDepartment !== "all"
                     ? "Try adjusting your search filters"
                     : "Add your first employee to get started"
                   }
